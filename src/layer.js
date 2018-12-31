@@ -14,8 +14,11 @@ class Layer {
     this.locked = false;
   }
 
+  addElement (element) {
+    this.elements.push(element);
+  }
+
   render (ctx) {
-    console.log('render layer');
     this.elements.forEach((element) => {
       element.render(ctx);
     });

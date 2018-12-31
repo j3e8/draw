@@ -8,7 +8,6 @@ class Artboard {
   }
 
   render (ctx) {
-    console.log('render artboard', this.location, this.size, SystemColors.ARTBOARD.toString());
     ctx.fillStyle = SystemColors.ARTBOARD.toString();
     ctx.fillRect(this.location.x, this.location.y, this.size.width, this.size.height);
   }

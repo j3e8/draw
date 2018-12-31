@@ -21,9 +21,11 @@ DEFAULT_STROKE_WIDTH[UNITS_PX] = 1.0;
 DEFAULT_STROKE_WIDTH[UNITS_MM] = 0.355;
 
 class Workspace {
-  constructor (app, size) {
+  constructor (app, size, pixelRatio) {
     this.app = app;
     this.size = size;
+    this.backBufferCanvas = document.createElement('canvas');
+    this.resizeBackBuffer(size, pixelRatio);
     const defaultArtboardSize = new Size(DEFAULT_ARTBOARD_WIDTH, DEFAULT_ARTBOARD_HEIGHT);
     this.artboards = [
       new Artboard(new Point(DEFAULT_ARTBOARD_X, DEFAULT_ARTBOARD_Y), defaultArtboardSize),
@@ -38,7 +40,6 @@ class Workspace {
     this.currentFill = SystemColors.DEFAULT_FILL.toString();
     this.currentStroke = SystemColors.DEFAULT_STROKE.toString();
     this.currentStrokeWidth = DEFAULT_STROKE_WIDTH[this.units];
-    console.log('currentStrokeWidth', this.currentStrokeWidth);
 
     const workspaceInterface = {
       getCurrentElementAttributes: this.getCurrentElementAttributes.bind(this),
@@ -47,8 +48,11 @@ class Workspace {
     this.layers = [ this.activeLayer ];
   }
 
+  addElement (element) {
+    this.activeLayer.addElement(element);
+  }
+
   getCurrentElementAttributes () {
-    console.log('getCurrentElementAttributes', this.currentStrokeWidth);
     return {
       fill: this.currentFill,
       stroke: this.currentStroke,
@@ -56,33 +60,43 @@ class Workspace {
     };
   }
 
+  resizeBackBuffer (size, pixelRatio) {
+    this.backBufferCanvas.width = size.width * pixelRatio;
+    this.backBufferCanvas.height = size.height * pixelRatio;
+    this.backBufferCanvas.style.width = `${size.width}px`;
+    this.backBufferCanvas.style.height = `${size.height}px`;
+  }
+
   mouseDown (screenPoint) {
-    console.log('workspace mouseDown', screenPoint);
     const worldPoint = this.screenPointToWorldPoint(screenPoint);
-    console.log('world point', worldPoint);
     MouseState.mouseDown(worldPoint);
     const activeTool = this.app.getActiveTool();
-    if (this.activeTool) {
-      this.activeTool.mouseDown(worldPoint);
+    if (activeTool) {
+      return activeTool.mouseDown(worldPoint);
     }
+    return false;
   }
 
   mouseMove (screenPoint) {
     const worldPoint = this.screenPointToWorldPoint(screenPoint);
     MouseState.mouseMove(worldPoint);
-    const activeTool = this.app.getActiveTool();
-    if (this.activeTool) {
-      this.activeTool.mouseMove(worldPoint);
+    if (MouseState.isDragging) {
+      const activeTool = this.app.getActiveTool();
+      if (activeTool) {
+        return activeTool.mouseMove(worldPoint);
+      }
     }
+    return false;
   }
 
   mouseUp (screenPoint) {
     const worldPoint = this.screenPointToWorldPoint(screenPoint);
     MouseState.mouseUp(worldPoint);
     const activeTool = this.app.getActiveTool();
-    if (this.activeTool) {
-      this.activeTool.mouseUp(worldPoint);
+    if (activeTool) {
+      return activeTool.mouseUp(worldPoint);
     }
+    return false;
   }
 
   getWorldArea () {
@@ -106,18 +120,13 @@ class Workspace {
   }
 
   render (ctx) {
-    console.log('render workspace', SystemColors.WORKSPACE.toString());
+    console.log('render workspace');
 
     // render workspace background
     ctx.fillStyle = SystemColors.WORKSPACE.toString();
     ctx.fillRect(0, 0, this.size.width, this.size.height);
 
-    ctx.save();
-      ctx.scale(1 / this.scale, 1 / this.scale);
-      /*** BEGIN now we're in world coordinates ***/
-      const worldArea = this.getWorldArea();
-      ctx.translate(worldArea.width / 2 - this.center.x, worldArea.height / 2 - this.center.y);
-
+    this.renderInWorldCoordinates(ctx, () => {
       // render artboards
       this.artboards.forEach((artboard) => {
         artboard.render(ctx);
@@ -127,7 +136,34 @@ class Workspace {
       this.layers.forEach((layer) => {
         layer.render(ctx);
       });
-      /*** END world coordinates ***/
+    });
+  }
+
+  refresh (ctx) {
+    console.log('refresh workspace');
+
+    // blit from backbuffer to this context
+    ctx.drawImage(this.backBufferCanvas, 0, 0);
+
+    this.renderInWorldCoordinates(ctx, () => {
+      // render whatever the active tool is doing
+      const activeTool = this.app.getActiveTool();
+      if (activeTool) {
+        activeTool.render(ctx);
+      }
+    });
+  }
+
+  renderInWorldCoordinates (ctx, fn) {
+    ctx.save();
+    ctx.scale(1 / this.scale, 1 / this.scale);
+    const worldArea = this.getWorldArea();
+    ctx.translate(worldArea.width / 2 - this.center.x, worldArea.height / 2 - this.center.y);
+
+    if (fn) {
+      fn();
+    }
+
     ctx.restore();
   }
 }

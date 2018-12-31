@@ -37,7 +37,6 @@ class Toolbar {
   }
 
   render (ctx) {
-    console.log('render toolbar');
     const size = this.app.getToolbarSize();
     ctx.fillStyle = SystemColors.TOOLBAR.toString();
     ctx.fillRect(0, 0, size.width, size.height);

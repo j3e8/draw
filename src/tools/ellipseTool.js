@@ -1,5 +1,6 @@
 import Tool from './tool';
 import Color from '../color/color';
+import Area from '../measures/area';
 import Ellipse from '../elements/ellipse';
 
 class EllipseTool extends Tool {
@@ -10,23 +11,39 @@ class EllipseTool extends Tool {
 
   mouseDown (location) {
     this.startPoint = location;
-    this.ellipse = new Ellipse(location, { width: 0, height: 0 }, this.app.getElementAttributes());
+    this.ellipse = new Ellipse(location, { width: 0, height: 0 }, this.app.getCurrentElementAttributes());
+    return false;
   }
 
   mouseMove (location) {
-    this.endPoint = location;
-    this.ellipse.setSize(Size.fromPoints(this.startPoint, this.endPoint));
+    if (this.startPoint) {
+      this.endPoint = location;
+      const area = Area.fromPoints(this.startPoint, this.endPoint);
+      console.log(area);
+      this.ellipse.setLocation(area.location);
+      this.ellipse.setSize(area.size);
+      return true;
+    }
+    return false;
   }
 
   mouseUp (location) {
-    this.endPoint = location;
-    this.ellipse.setSize(Size.fromPoints(this.startPoint, this.endPoint));
-    appInterface.addElement(this.ellipse);
-    this.ellipse = null;
+    if (this.startPoint) {
+      this.endPoint = location;
+      const area = Area.fromPoints(this.startPoint, this.endPoint);
+      this.ellipse.setLocation(area.location);
+      this.ellipse.setSize(area.size);
+      this.app.addElementToWorkspace(this.ellipse);
+      this.ellipse = null;
+      return true;
+    }
+    return false;
   }
 
   render (ctx) {
-    this.ellipse.render(ctx);
+    if (this.ellipse) {
+      this.ellipse.render(ctx);
+    }
   }
 }
 

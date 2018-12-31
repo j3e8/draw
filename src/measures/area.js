@@ -2,6 +2,16 @@ import Point from './point';
 import Size from './size';
 
 class Area {
+  static fromPoints (a, b) {
+    console.log(a, b);
+    return new Area(
+      Math.min(a.x, b.x),
+      Math.min(a.y, b.y),
+      Math.abs(a.x - b.x),
+      Math.abs(a.y - b.y),
+    );
+  }
+
   constructor (x, y, w, h) {
     this.x = x;
     this.y = y;

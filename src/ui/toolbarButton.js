@@ -15,7 +15,6 @@ class ToolbarButton {
   render (ctx) {
     const location = this.toolbar.getToolbarButtonLocation(this);
     const size = this.toolbar.getToolbarButtonSize();
-    console.log('render toolbar button', location, size);
     ctx.fillStyle = SystemColors.TOOLBAR_BUTTON.toString();
     ctx.fillRect(location.x, location.y, size.width, size.height);
 
