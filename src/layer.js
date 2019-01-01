@@ -9,7 +9,7 @@ const Size = require('measures/size');
 class Layer {
   constructor (workspaceInterface) {
     this.workspace = workspaceInterface;
-    this.elements = [ new Ellipse(new Point(-4.25, -5.5), new Size(8.5, 11), this.workspace.getCurrentElementAttributes()) ];
+    this.elements = [ ];
     this.visible = true;
     this.locked = false;
   }
