@@ -6,4 +6,38 @@ body {
   margin: 0;
   padding: 0;
   background-color: #808080;
+  overflow: hidden;
+}
+
+#react-container {
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+}
+
+#toolbar {
+  flex: 0 0 30px;
+  background-color: #e0f190;
+}
+
+#main {
+  flex: 1 1 1px;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  background-color: #f1cc90;
+}
+
+#tabs {
+  flex: 0 0 20px;
+  background-color: #c1dcc0;
+}
+
+#canvas-container {
+  flex: 1 1 1px;
+}
+
+#palettes {
+  flex: 0 0 200px;
+  background-color: #ff60cd;
 }

@@ -28,15 +28,15 @@ function debounce(fn, ms) {
 }
 
 function getCanvasDimensions() {
-  return new Size(document.body.offsetWidth, document.body.offsetHeight);
+  return new Size(canvas.parentNode.offsetWidth, canvas.parentNode.offsetHeight);
 }
 
 function resizeCanvas() {
   if (!canvas) {
     return;
   }
-  const w = document.body.offsetWidth;
-  const h = document.body.offsetHeight;
+  const w = canvas.parentNode.offsetWidth;
+  const h = canvas.parentNode.offsetHeight;
   canvas.width = w * devicePixelRatio;
   canvas.height = h * devicePixelRatio;
   canvas.style.width = `${w}px`;

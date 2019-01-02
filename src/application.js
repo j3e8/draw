@@ -13,7 +13,6 @@ class Application {
       addElementToWorkspace: this.addElementToWorkspace.bind(this),
       getActiveTool: this.getActiveTool.bind(this),
       getCurrentElementAttributes: this.getCurrentElementAttributes.bind(this),
-      getToolbarSize: this.getToolbarSize.bind(this),
       getWorkspaceSize: this.getWorkspaceSize.bind(this),
     };
     this.activeWorkspace = new Workspace(appInterface, this.workspaceArea.size, this.pixelRatio);
@@ -46,23 +45,17 @@ class Application {
     return this.canvasElement.getContext('2d');
   }
 
-  getToolbarSize () {
-    return this.toolbarArea.size;
-  }
-
   getWorkspaceSize () {
     return this.workspaceArea.size;
   }
 
   mouseDown (x, y) {
-    if (!this.toolbarArea || !this.workspaceArea) {
+    if (!this.workspaceArea) {
       return;
     }
     const pt = new Point(x, y);
     console.log('application mouseDown', pt, this.workspaceArea);
-    if (this.toolbarArea.containsPoint(pt)) {
-      this.toolbar.mouseDown(pt.relativeToArea(this.toolbarArea));
-    } else if (this.workspaceArea.containsPoint(pt)) {
+    if (this.workspaceArea.containsPoint(pt)) {
       const needsRefresh = this.activeWorkspace.mouseDown(pt.relativeToArea(this.workspaceArea));
       if (needsRefresh) {
         this.refresh();
@@ -71,13 +64,11 @@ class Application {
   }
 
   mouseMove (x, y) {
-    if (!this.toolbarArea || !this.workspaceArea) {
+    if (!this.workspaceArea) {
       return;
     }
     const pt = new Point(x, y);
-    if (this.toolbarArea.containsPoint(pt)) {
-      this.toolbar.mouseMove(pt.relativeToArea(this.toolbarArea));
-    } else if (this.workspaceArea.containsPoint(pt)) {
+    if (this.workspaceArea.containsPoint(pt)) {
       const needsRefresh = this.activeWorkspace.mouseMove(pt.relativeToArea(this.workspaceArea));
       if (needsRefresh) {
         this.refresh();
@@ -86,13 +77,11 @@ class Application {
   }
 
   mouseUp (x, y) {
-    if (!this.toolbarArea || !this.workspaceArea) {
+    if (!this.workspaceArea) {
       return;
     }
     const pt = new Point(x, y);
-    if (this.toolbarArea.containsPoint(pt)) {
-      this.toolbar.mouseUp(pt.relativeToArea(this.toolbarArea));
-    } else if (this.workspaceArea.containsPoint(pt)) {
+    if (this.workspaceArea.containsPoint(pt)) {
       const needsRefresh = this.activeWorkspace.mouseUp(pt.relativeToArea(this.workspaceArea));
       if (needsRefresh) {
         this.refresh();
@@ -102,8 +91,7 @@ class Application {
 
   updateSize (size) {
     this.size = size;
-    this.toolbarArea = new Area(0, 0, 30, this.size.height);
-    this.workspaceArea = new Area(this.toolbarArea.size.width, 0, this.size.width - this.toolbarArea.size.width, this.size.height);
+    this.workspaceArea = new Area(0, 0, this.size.width, this.size.height);
     if (this.workspaces) {
       this.workspaces.forEach((workspace) => {
         workspace.resizeBackBuffer(this.workspaceArea.size, this.pixelRatio);
@@ -120,18 +108,10 @@ class Application {
     ctx.scale(this.pixelRatio, this.pixelRatio);
 
     this.renderWorkspaces();
-    this.renderToolbar(ctx);
 
     ctx.restore();
 
     this.refresh();
-  }
-
-  renderToolbar (ctx) {
-    ctx.save();
-    ctx.translate(this.toolbarArea.left, this.toolbarArea.top); // translate to the top left corner of the toolbar area
-    this.toolbar.render(ctx);
-    ctx.restore();
   }
 
   renderWorkspaces () {
