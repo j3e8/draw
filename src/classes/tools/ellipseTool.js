@@ -19,7 +19,6 @@ class EllipseTool extends Tool {
     if (this.startPoint) {
       this.endPoint = location;
       const area = Area.fromPoints(this.startPoint, this.endPoint);
-      console.log(area);
       this.ellipse.setLocation(area.location);
       this.ellipse.setSize(area.size);
       return true;

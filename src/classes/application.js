@@ -1,23 +1,24 @@
 import Workspace from './workspace';
-import Toolbar from './ui/toolbar';
 import Area from './measures/area';
 import Point from './measures/point';
 import SystemColors from './color/systemColors';
 
 class Application {
   constructor (canvasElement, appSize, pixelRatio = 1) {
-    this.canvasElement = canvasElement;
-    this.updateSize(appSize);
-    this.pixelRatio = pixelRatio;
-    const appInterface = {
+    this.appInterface = {
       addElementToWorkspace: this.addElementToWorkspace.bind(this),
       getActiveTool: this.getActiveTool.bind(this),
       getCurrentElementAttributes: this.getCurrentElementAttributes.bind(this),
       getWorkspaceSize: this.getWorkspaceSize.bind(this),
     };
-    this.activeWorkspace = new Workspace(appInterface, this.workspaceArea.size, this.pixelRatio);
+  }
+
+  setCanvas (canvasElement, appSize, pixelRatio = 1) {
+    this.canvasElement = canvasElement;
+    this.pixelRatio = pixelRatio;
+    this.updateSize(appSize);
+    this.activeWorkspace = new Workspace(this.appInterface, this.workspaceArea.size, this.pixelRatio);
     this.workspaces = [ this.activeWorkspace ];
-    this.toolbar = new Toolbar(appInterface);
   }
 
   setPixelRatio (pixelRatio = 1) {
@@ -34,11 +35,11 @@ class Application {
   }
 
   getActiveTool () {
-    if (this.toolbar) {
-      console.log('this.toolbar.getActiveTool');
-      return this.toolbar.getActiveTool();
-    }
-    return null;
+    return this.activeTool;
+  }
+
+  setActiveTool (tool) {
+    this.activeTool = tool;
   }
 
   getContext () {
@@ -54,7 +55,6 @@ class Application {
       return;
     }
     const pt = new Point(x, y);
-    console.log('application mouseDown', pt, this.workspaceArea);
     if (this.workspaceArea.containsPoint(pt)) {
       const needsRefresh = this.activeWorkspace.mouseDown(pt.relativeToArea(this.workspaceArea));
       if (needsRefresh) {
@@ -100,7 +100,9 @@ class Application {
   }
 
   render () {
-    console.log('render application');
+    if (!this.canvasElement) {
+      return;
+    }
     const ctx = this.canvasElement.getContext('2d');
 
     // scale up for retina display
@@ -122,7 +124,9 @@ class Application {
   }
 
   refresh () {
-    console.log('refresh application');
+    if (!this.canvasElement) {
+      return;
+    }
     const ctx = this.canvasElement.getContext('2d');
 
     // scale up for retina display

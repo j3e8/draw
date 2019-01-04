@@ -1,10 +1,10 @@
-const Element = require('elements/element');
-const Ellipse = require('elements/ellipse');
+const Element = require('./elements/element');
+const Ellipse = require('./elements/ellipse');
 
-const Color = require('color/color');
+const Color = require('./color/color');
 
-const Point = require('measures/point');
-const Size = require('measures/size');
+const Point = require('./measures/point');
+const Size = require('./measures/size');
 
 class Layer {
   constructor (workspaceInterface) {

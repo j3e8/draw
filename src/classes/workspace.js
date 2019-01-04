@@ -120,8 +120,6 @@ class Workspace {
   }
 
   render (ctx) {
-    console.log('render workspace');
-
     // render workspace background
     ctx.fillStyle = SystemColors.WORKSPACE.toString();
     ctx.fillRect(0, 0, this.size.width, this.size.height);
@@ -140,8 +138,6 @@ class Workspace {
   }
 
   refresh (ctx) {
-    console.log('refresh workspace');
-
     // blit from backbuffer to this context
     ctx.drawImage(this.backBufferCanvas, 0, 0);
 
