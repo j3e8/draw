@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import EllipseTool from '../classes/tools/ellipseTool';
+import RectangleTool from '../classes/tools/rectangleTool';
 import PencilTool from '../classes/tools/pencilTool';
 
 class Toolbar extends React.Component {
@@ -17,7 +18,13 @@ class Toolbar extends React.Component {
         id: 'ellipse',
         name: 'Ellipse Tool',
         tool: new EllipseTool(this.props.appInterface),
-        icon: `www/images/toolbar/pencil.png`,
+        icon: `www/images/toolbar/ellipse.png`,
+      },
+      {
+        id: 'rectangle',
+        name: 'Rectangle Tool',
+        tool: new RectangleTool(this.props.appInterface),
+        icon: `www/images/toolbar/rectangle.png`,
       },
       {
         id: 'pencil',
@@ -39,6 +46,7 @@ class Toolbar extends React.Component {
     this.setState({
       activeTool: tool,
     });
+    console.log(`selected ${tool.name}`);
     this.props.onToolSelect(tool.tool);
   }
 

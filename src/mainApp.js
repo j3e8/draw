@@ -49,6 +49,9 @@ class MainApp extends React.Component {
 
   handleToolSelect = (tool) => {
     activeTool = tool;
+    if (app) {
+      app.setActiveTool(activeTool);
+    }
   }
 
   getCanvasDimensions = () => {
