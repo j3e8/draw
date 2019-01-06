@@ -3,6 +3,7 @@ import Application from './classes/application';
 import Size from './classes/measures/size';
 
 import Toolbar from './components/toolbar';
+import ToolSettings from './components/toolSettings';
 
 import debounce from './helpers/debounce';
 
@@ -24,7 +25,7 @@ class MainApp extends React.Component {
     app.render();
 
     window.addEventListener("resize", () => {
-      debounce(this.resizeCanvas);
+      debounce(this.resizeCanvas.bind(this));
     });
 
     this.canvas.addEventListener('mousedown', (evt) => {
@@ -77,15 +78,18 @@ class MainApp extends React.Component {
 
   render () {
     return (
-      <div id="wrapper">
-        <Toolbar appInterface={ app.appInterface } onToolSelect={ this.handleToolSelect } />
-        <div id="main">
-          <div id="tabs"></div>
-          <div id="canvas-container">
-            <canvas id="canvas" ref={ c => this.canvas = c }></canvas>
+      <div className="full-height">
+        <ToolSettings />
+        <div id="wrapper">
+          <Toolbar appInterface={ app.appInterface } onToolSelect={ this.handleToolSelect } />
+          <div id="main">
+            <div id="tabs"></div>
+            <div id="canvas-container">
+              <canvas id="canvas" ref={ c => this.canvas = c }></canvas>
+            </div>
           </div>
+          <div id="palettes"></div>
         </div>
-        <div id="palettes"></div>
       </div>
     );
   }

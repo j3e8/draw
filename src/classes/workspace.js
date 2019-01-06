@@ -23,13 +23,11 @@ DEFAULT_STROKE_WIDTH[UNITS_MM] = 0.355;
 class Workspace {
   constructor (app, size, pixelRatio) {
     this.app = app;
-    this.size = size;
     this.backBufferCanvas = document.createElement('canvas');
-    this.resizeBackBuffer(size, pixelRatio);
+    this.resize(size, pixelRatio);
     const defaultArtboardSize = new Size(DEFAULT_ARTBOARD_WIDTH, DEFAULT_ARTBOARD_HEIGHT);
-    this.artboards = [
-      new Artboard(new Point(DEFAULT_ARTBOARD_X, DEFAULT_ARTBOARD_Y), defaultArtboardSize),
-    ];
+    this.activeArtboard = new Artboard(new Point(DEFAULT_ARTBOARD_X, DEFAULT_ARTBOARD_Y), defaultArtboardSize);
+    this.artboards = [ this.activeArtboard ];
     const xRatio = DEFAULT_ARTBOARD_WIDTH / (size.width - 40);
     const yRatio = DEFAULT_ARTBOARD_HEIGHT / (size.height - 40);
     this.scale = Math.max(xRatio, yRatio); // world units per screen pixel
@@ -60,7 +58,17 @@ class Workspace {
     };
   }
 
-  resizeBackBuffer (size, pixelRatio) {
+  getArtboardSize () {
+    return this.activeArtboard.getSize();
+  }
+
+  setArtboardSize (size) {
+    return this.activeArtboard.setSize(size);
+  }
+
+  resize (size, pixelRatio) {
+    this.size = size;
+    this.pixelRatio = pixelRatio;
     this.backBufferCanvas.width = size.width * pixelRatio;
     this.backBufferCanvas.height = size.height * pixelRatio;
     this.backBufferCanvas.style.width = `${size.width}px`;

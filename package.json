@@ -1,12 +1,12 @@
 {
-  "name": "draw",
+  "name": "Draw",
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "electron .",
     "build": "webpack --devtool sourcemap --bail",
-    "watch": "webpack -w -d --progress",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "webpack -w -d --progress"
   },
   "author": "",
   "license": "ISC",

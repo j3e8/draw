@@ -2,6 +2,7 @@ import Workspace from './workspace';
 import Area from './measures/area';
 import Point from './measures/point';
 import SystemColors from './color/systemColors';
+const { publish, subscribe } = require('../helpers/pubsub');
 
 class Application {
   constructor (canvasElement, appSize, pixelRatio = 1) {
@@ -9,8 +10,14 @@ class Application {
       addElementToWorkspace: this.addElementToWorkspace.bind(this),
       getActiveTool: this.getActiveTool.bind(this),
       getCurrentElementAttributes: this.getCurrentElementAttributes.bind(this),
+      getArtboardSize: this.getArtboardSize.bind(this),
       getWorkspaceSize: this.getWorkspaceSize.bind(this),
     };
+
+    subscribe('artboardSize', (size) => {
+      this.activeWorkspace.setArtboardSize(size);
+      this.render();
+    });
   }
 
   setCanvas (canvasElement, appSize, pixelRatio = 1) {
@@ -44,6 +51,10 @@ class Application {
 
   getContext () {
     return this.canvasElement.getContext('2d');
+  }
+
+  getArtboardSize () {
+    return this.activeWorkspace.getArtboardSize();
   }
 
   getWorkspaceSize () {
@@ -94,8 +105,9 @@ class Application {
     this.workspaceArea = new Area(0, 0, this.size.width, this.size.height);
     if (this.workspaces) {
       this.workspaces.forEach((workspace) => {
-        workspace.resizeBackBuffer(this.workspaceArea.size, this.pixelRatio);
+        workspace.resize(this.workspaceArea.size, this.pixelRatio);
       });
+      publish('artboardSize', this.activeWorkspace.getArtboardSize());
     }
   }
 
