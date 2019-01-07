@@ -1,0 +1,59 @@
+html,body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #808080;
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.full-height {
+  height: 100%;
+}
+
+#react-container {
+  height: 100%;
+}
+
+#wrapper {
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+}
+
+#toolsettings {
+  padding: 0.3em;
+}
+
+#main {
+  flex: 1 1 1px;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+}
+
+#tabs {
+  flex: 0 0 20px;
+  background-color: #606060;
+}
+
+#canvas-container {
+  flex: 1 1 1px;
+}
+
+#palettes {
+  flex: 0 0 200px;
+  background-color: #a0a0a0;
+}
+
+/*** all scss imports ***/
+@import './components/toolbar/toolbar.scss';

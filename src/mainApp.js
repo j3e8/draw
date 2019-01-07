@@ -2,7 +2,7 @@ import React from 'react';
 import Application from './classes/application';
 import Size from './classes/measures/size';
 
-import Toolbar from './components/toolbar';
+import Toolbar from './components/toolbar/toolbar';
 import ToolSettings from './components/toolSettings';
 
 import debounce from './helpers/debounce';

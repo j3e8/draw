@@ -2,6 +2,8 @@
 node_modules
 www/bundle-main.js
 www/bundle*.js
+www/bundle*.map
+www/bundle*.css
 npm-debug.log
 package-lock.json
 .env

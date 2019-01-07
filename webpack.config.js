@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const WebpackWriteStatsPlugin = require('webpack-write-stats-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -13,6 +14,7 @@ module.exports = {
   entry: {
     main: path.resolve(__dirname, 'src/main.js'),
   },
+  mode: isProduction ? 'production' : 'development',
   output: {
     filename: 'bundle-[name].js',
     chunkFilename: 'bundle-[name].js',
@@ -29,14 +31,26 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.s?css$/,
+        include: path.resolve(__dirname, 'src'),
+        use: [
+          MiniCssExtractPlugin.loader,
+          { loader: 'css-loader', options: { url: false, sourceMap: true } },
+          { loader: 'sass-loader', options: { sourceMap: true } },
+        ],
+      },
+      {
         test: /\.js$/,
-        include: __dirname,
+        include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
         use: [{ loader: 'babel-loader' }],
       },
     ],
   },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: "bundle-main.css",
+    }),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify(isProduction ? 'production' : 'development'),
@@ -46,15 +60,6 @@ module.exports = {
       chunks: false,
       modules: false,
     }),
-    isProduction ?
-      new webpack.optimize.UglifyJsPlugin({
-        sourceMap: true,
-        compress: {
-          warnings: false,
-          comparisons: false,
-        },
-      })
-      : null,
     !isProduction ? new ProgressBarPlugin() : null,
     !isProduction ? new WebpackNotifierPlugin({ alwaysNotify: true }) : null,
   ].filter(i => i),

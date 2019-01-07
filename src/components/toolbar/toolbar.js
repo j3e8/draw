@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import EllipseTool from '../classes/tools/ellipseTool';
-import RectangleTool from '../classes/tools/rectangleTool';
-import PencilTool from '../classes/tools/pencilTool';
+import EllipseTool from '../../classes/tools/ellipseTool';
+import RectangleTool from '../../classes/tools/rectangleTool';
+import PencilTool from '../../classes/tools/pencilTool';
 
 class Toolbar extends React.Component {
   static propTypes = {

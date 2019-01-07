@@ -1,0 +1,25 @@
+#toolbar {
+  flex: 0 0 32px;
+  background-color: #c0c0c0;
+
+  button {
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    background-color: #e0e0e0;
+    margin: 0;
+    padding: 2px;
+    width: 32px;
+    height: 32px;
+    text-align: center;
+    -webkit-appearance: none;
+    outline: none;
+    -webkit-outline: none;
+    &.active {
+      background-color: #a0a0a0;
+    }
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+}
