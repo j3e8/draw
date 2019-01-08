@@ -4,8 +4,10 @@ const SystemColors = require('../color/systemColors');
 class Shape extends Element {
   constructor(attributes) {
     super();
-    this.fill = attributes.fill !== undefined ? attributes.fill : SystemColors.DEFAULT_FILL.toString();
-    this.stroke = attributes.stroke !== undefined ? attributes.stroke : SystemColors.DEFAULT_STROKE.toString();
+    this.fillColor = attributes.fillColor !== undefined ? attributes.fillColor : SystemColors.DEFAULT_FILL.toString();
+    this.fill = attributes.fill;
+    this.strokeColor = attributes.strokeColor !== undefined ? attributes.strokeColor : SystemColors.DEFAULT_STROKE.toString();
+    this.stroke = attributes.stroke ? new attributes.stroke(attributes) : null;
     this.strokeWidth = attributes.strokeWidth !== undefined ? attributes.strokeWidth : null;
   }
 }

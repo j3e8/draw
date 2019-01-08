@@ -7,6 +7,16 @@ class Ellipse extends Shape {
     this.size = size;
   }
 
+  getTotalLineLength () {
+    // Ramanujan's approximation
+    const h = ((this.size.width - this.size.height) * (this.size.width - this.size.height)) / ((this.size.width + this.size.height) * (this.size.width + this.size.height));
+    return Math.PI * (this.size.width + this.size.height) * (1 + ( (3 * h) / (10 + Math.sqrt(4 - 3 * h)) ));
+  }
+
+  locationAtStrokePosition (pct) {
+
+  }
+
   setLocation (location) {
     this.location = location;
   }
@@ -16,11 +26,8 @@ class Ellipse extends Shape {
   }
 
   render (ctx) {
-    if (!this.fill && !this.stroke) {
-      return;
-    }
-    ctx.fillStyle = this.fill.toString();
-    ctx.strokeStyle = this.stroke.toString();
+    ctx.fillStyle = this.fillColor.toString();
+    ctx.strokeStyle = this.strokeColor.toString();
     ctx.lineWidth = this.strokeWidth;
     ctx.beginPath();
     ctx.ellipse(this.location.x + this.size.width / 2,
@@ -30,10 +37,10 @@ class Ellipse extends Shape {
                 0,
                 0,
                 Math.PI * 2);
-    if (this.fill) {
+    if (this.fillColor) {
       ctx.fill();
     }
-    if (this.stroke) {
+    if (this.strokeColor && !this.stroke) {
       ctx.stroke();
     }
   }

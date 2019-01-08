@@ -6,6 +6,8 @@ const MouseState = require('./input/mouseState');
 const SystemColors = require('./color/systemColors');
 const Layer = require('./layer');
 
+const VaryingThicknessStrokeStyle = require('./elements/styles/stroke/varyingThicknessStrokeStyle');
+
 const UNITS_INCHES = 1;
 const UNITS_PX = 2;
 const UNITS_MM = 3;
@@ -16,7 +18,7 @@ const DEFAULT_ARTBOARD_X = -DEFAULT_ARTBOARD_WIDTH / 2;
 const DEFAULT_ARTBOARD_Y = -DEFAULT_ARTBOARD_HEIGHT / 2;
 
 const DEFAULT_STROKE_WIDTH = {};
-DEFAULT_STROKE_WIDTH[UNITS_INCHES] = 0.014;
+DEFAULT_STROKE_WIDTH[UNITS_INCHES] = 0.034;
 DEFAULT_STROKE_WIDTH[UNITS_PX] = 1.0;
 DEFAULT_STROKE_WIDTH[UNITS_MM] = 0.355;
 
@@ -35,8 +37,10 @@ class Workspace {
     this.center = new Point(0, 0); // in world coordinates
 
     // default attributes
-    this.currentFill = SystemColors.DEFAULT_FILL.toString();
-    this.currentStroke = SystemColors.DEFAULT_STROKE.toString();
+    this.currentFillColor = SystemColors.DEFAULT_FILL.toString();
+    this.currentFill = null;
+    this.currentStrokeColor = SystemColors.DEFAULT_STROKE.toString();
+    this.currentStroke = VaryingThicknessStrokeStyle;
     this.currentStrokeWidth = DEFAULT_STROKE_WIDTH[this.units];
 
     const workspaceInterface = {
@@ -52,7 +56,9 @@ class Workspace {
 
   getCurrentElementAttributes () {
     return {
+      fillColor: this.currentFillColor,
       fill: this.currentFill,
+      strokeColor: this.currentStrokeColor,
       stroke: this.currentStroke,
       strokeWidth: this.currentStrokeWidth,
     };

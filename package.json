@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "electron .",
+    "start": "./node_modules/.bin/electron .",
     "build": "webpack --devtool sourcemap --bail",
     "watch": "webpack -w -d --progress"
   },
@@ -21,6 +21,7 @@
     "babel-preset-stage-0": "^6.5.0",
     "babel-runtime": "^6.20.0",
     "css-loader": "^0.28.11",
+    "electron": "^4.0.1",
     "mini-css-extract-plugin": "^0.4.4",
     "node-sass": "^4.9.0",
     "progress-bar-webpack-plugin": "^1.9.0",
