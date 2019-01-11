@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import EllipseTool from '../../classes/tools/ellipseTool';
 import RectangleTool from '../../classes/tools/rectangleTool';
-import PencilTool from '../../classes/tools/pencilTool';
+import PenTool from '../../classes/tools/penTool';
 
 class Toolbar extends React.Component {
   static propTypes = {
@@ -27,10 +27,10 @@ class Toolbar extends React.Component {
         icon: `www/images/toolbar/rectangle.png`,
       },
       {
-        id: 'pencil',
-        name: 'Pencil Tool',
-        tool: new PencilTool(this.props.appInterface),
-        icon: `www/images/toolbar/pencil.png`,
+        id: 'pen',
+        name: 'Pen Tool',
+        tool: new PenTool(this.props.appInterface),
+        icon: `www/images/toolbar/pen.png`,
       },
     ];
     this.state = {

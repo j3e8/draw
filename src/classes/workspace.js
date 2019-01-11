@@ -1,12 +1,14 @@
 import Artboard from './artboard';
-import Area from './measures/area';
-import Point from './measures/point';
-import Size from './measures/size';
+import Area from './geometry/area';
+import Point from './geometry/point';
+import Size from './geometry/size';
 const MouseState = require('./input/mouseState');
 const SystemColors = require('./color/systemColors');
 const Layer = require('./layer');
 
 const VaryingThicknessStrokeStyle = require('./elements/styles/stroke/varyingThicknessStrokeStyle');
+const PathElement = require('./elements/pathElement');
+const Vertex = require('./geometry/vertex');
 
 const UNITS_INCHES = 1;
 const UNITS_PX = 2;
@@ -18,7 +20,7 @@ const DEFAULT_ARTBOARD_X = -DEFAULT_ARTBOARD_WIDTH / 2;
 const DEFAULT_ARTBOARD_Y = -DEFAULT_ARTBOARD_HEIGHT / 2;
 
 const DEFAULT_STROKE_WIDTH = {};
-DEFAULT_STROKE_WIDTH[UNITS_INCHES] = 0.034;
+DEFAULT_STROKE_WIDTH[UNITS_INCHES] = 0.014;
 DEFAULT_STROKE_WIDTH[UNITS_PX] = 1.0;
 DEFAULT_STROKE_WIDTH[UNITS_MM] = 0.355;
 
@@ -48,6 +50,12 @@ class Workspace {
     };
     this.activeLayer = new Layer(workspaceInterface);
     this.layers = [ this.activeLayer ];
+
+    const f1 = new Vertex(new Point(-2, 0));
+    const p = new PathElement(f1, this.getCurrentElementAttributes());
+    p.addVertex(new Vertex(new Point(2, 0)));
+    p.addVertex(new Vertex(new Point(2, 2)));
+    this.addElement(p);
   }
 
   addElement (element) {
@@ -94,11 +102,9 @@ class Workspace {
   mouseMove (screenPoint) {
     const worldPoint = this.screenPointToWorldPoint(screenPoint);
     MouseState.mouseMove(worldPoint);
-    if (MouseState.isDragging) {
-      const activeTool = this.app.getActiveTool();
-      if (activeTool) {
-        return activeTool.mouseMove(worldPoint);
-      }
+    const activeTool = this.app.getActiveTool();
+    if (activeTool) {
+      return activeTool.mouseMove(worldPoint);
     }
     return false;
   }

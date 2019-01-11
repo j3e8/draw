@@ -3,8 +3,8 @@ const Ellipse = require('./elements/ellipse');
 
 const Color = require('./color/color');
 
-const Point = require('./measures/point');
-const Size = require('./measures/size');
+const Point = require('./geometry/point');
+const Size = require('./geometry/size');
 
 class Layer {
   constructor (workspaceInterface) {

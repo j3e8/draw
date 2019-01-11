@@ -1,7 +1,8 @@
 import Tool from './tool';
 import Color from '../color/color';
-import Area from '../measures/area';
+import Area from '../geometry/area';
 import Rectangle from '../elements/rectangle';
+import MouseState from '../input/mouseState';
 
 class RectangleTool extends Tool {
   constructor (appInterface) {
@@ -17,7 +18,7 @@ class RectangleTool extends Tool {
   }
 
   mouseMove (location) {
-    if (this.startPoint) {
+    if (MouseState.isDragging && this.startPoint) {
       this.endPoint = location;
       const area = Area.fromPoints(this.startPoint, this.endPoint);
       this.rectangle.setLocation(area.location);

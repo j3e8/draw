@@ -1,6 +1,6 @@
 import React from 'react';
 import Application from './classes/application';
-import Size from './classes/measures/size';
+import Size from './classes/geometry/size';
 
 import Toolbar from './components/toolbar/toolbar';
 import ToolSettings from './components/toolSettings';

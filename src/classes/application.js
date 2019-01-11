@@ -1,6 +1,6 @@
 import Workspace from './workspace';
-import Area from './measures/area';
-import Point from './measures/point';
+import Area from './geometry/area';
+import Point from './geometry/point';
 import SystemColors from './color/systemColors';
 const { publish, subscribe } = require('../helpers/pubsub');
 

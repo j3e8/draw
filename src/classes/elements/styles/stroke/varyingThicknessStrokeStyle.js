@@ -1,8 +1,8 @@
 import StrokeStyle from './strokeStyle';
-import Range from '../../../measures/range';
+import Range from '../../../geometry/range';
 import SystemColors from '../../../color/systemColors';
 
-const DEFAULT_TRANSITION_POINTS = 150;
+const DEFAULT_TRANSITION_POINTS_PER_UNIT = 15;
 const DEFAULT_START_THICKNESS = 0.25;
 const DEFAULT_END_THICKNESS = 0.25;
 const DEFAULT_MIN_THICKNESS = 0.67;
@@ -15,15 +15,14 @@ class VaryingThicknessStrokeStyle extends StrokeStyle {
     this.strokeWidth = options.strokeWidth || 1;
     this.strokeColor = options.strokeColor || SystemColors.DEFAULT_STROKE;
 
-    this.transitionPoints = DEFAULT_TRANSITION_POINTS;
+    this.transitionPointsPerUnit = DEFAULT_TRANSITION_POINTS_PER_UNIT;
     this.startThickness = DEFAULT_START_THICKNESS;
     this.endThickness = DEFAULT_END_THICKNESS;
     this.ratioRange = new Range(DEFAULT_MIN_THICKNESS, DEFAULT_MAX_THICKNESS);
-    this.initialize();
   }
 
-  initialize () {
-    const numPoints = this.transitionPoints + 2;
+  choosePoints (length) {
+    const numPoints = Math.round(this.transitionPointsPerUnit * length) + 2;
     this.points = new Array(numPoints);
     this.points[0] = {
       position: 0,
@@ -35,9 +34,9 @@ class VaryingThicknessStrokeStyle extends StrokeStyle {
     };
 
     let lastPosition = 0;
-    const intervalOffsetRange = new Range(0.75, 1.25);
+    const intervalOffsetRange = new Range(0.5, 1.5);
     for (let i=1; i < numPoints - 1; i++) {
-      const avgIncrementPerPoint = (1 - lastPosition) / (this.transitionPoints - i + 2);
+      const avgIncrementPerPoint = (1 - lastPosition) / (numPoints - 1 - i + 1);
       const p = lastPosition + intervalOffsetRange.randomValue() * avgIncrementPerPoint;
       console.log(lastPosition, avgIncrementPerPoint, p);
       this.points[i] = {
@@ -46,7 +45,7 @@ class VaryingThicknessStrokeStyle extends StrokeStyle {
       };
       lastPosition = p;
     }
-    console.log('initialized', this.points);
+    console.log(this.points);
   }
 
   dataAtPosition (position) {
@@ -73,17 +72,27 @@ class VaryingThicknessStrokeStyle extends StrokeStyle {
 
   render (ctx, shape) {
     const lineLength = shape.getTotalLineLength();
-    const interval = this.strokeWidth * 0.05;
+    this.choosePoints(lineLength);
 
     ctx.fillStyle = this.strokeColor.toString();
-    for (let i=0; i < lineLength; i+=interval) {
-      const pos = i / lineLength;
-      const location = shape.locationAtStrokePosition(pos);
-      const data = this.dataAtPosition(pos);
+    for (let i=0; i < this.points.length; i++) {
+      const location = shape.locationAtStrokePosition(this.points[i].position);
       ctx.beginPath();
-      ctx.arc(location.x, location.y, (data.thickness / 2) * this.strokeWidth, 0, Math.PI * 2);
+      ctx.arc(location.x, location.y, (this.points[i].thickness / 2) * this.strokeWidth, 0, Math.PI * 2);
       ctx.fill();
     }
+
+    // const interval = this.strokeWidth * 0.05;
+    // ctx.fillStyle = this.strokeColor.toString();
+    // for (let i=0; i < lineLength; i+=interval) {
+    //   const pos = i / lineLength;
+    //   const location = shape.locationAtStrokePosition(pos);
+    //   const data = this.dataAtPosition(pos);
+    //   ctx.beginPath();
+    //   ctx.arc(location.x, location.y, (data.thickness / 2) * this.strokeWidth, 0, Math.PI * 2);
+    //   ctx.fill();
+    // }
+
   }
 }
 

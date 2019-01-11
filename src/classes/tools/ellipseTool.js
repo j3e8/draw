@@ -1,7 +1,8 @@
 import Tool from './tool';
 import Color from '../color/color';
-import Area from '../measures/area';
+import Area from '../geometry/area';
 import Ellipse from '../elements/ellipse';
+import MouseState from '../input/mouseState';
 
 class EllipseTool extends Tool {
   constructor (appInterface) {
@@ -16,7 +17,7 @@ class EllipseTool extends Tool {
   }
 
   mouseMove (location) {
-    if (this.startPoint) {
+    if (MouseState.isDragging && this.startPoint) {
       this.endPoint = location;
       const area = Area.fromPoints(this.startPoint, this.endPoint);
       this.ellipse.setLocation(area.location);

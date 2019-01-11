@@ -1,5 +1,5 @@
 import React from 'react';
-import Size from '../classes/measures/size';
+import Size from '../classes/geometry/size';
 const { publish, subscribe } = require('../helpers/pubsub');
 
 class ToolSettings extends React.Component {
