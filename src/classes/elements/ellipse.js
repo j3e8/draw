@@ -7,16 +7,6 @@ class Ellipse extends Shape {
     this.size = size;
   }
 
-  getTotalLineLength () {
-    // Ramanujan's approximation
-    const h = ((this.size.width - this.size.height) * (this.size.width - this.size.height)) / ((this.size.width + this.size.height) * (this.size.width + this.size.height));
-    return Math.PI * (this.size.width + this.size.height) * (1 + ( (3 * h) / (10 + Math.sqrt(4 - 3 * h)) ));
-  }
-
-  locationAtStrokePosition (pct) {
-
-  }
-
   setLocation (location) {
     this.location = location;
   }

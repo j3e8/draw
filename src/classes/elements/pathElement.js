@@ -1,7 +1,5 @@
 const Shape = require('./shape');
 const Path = require('../geometry/path');
-const calculatePathLength = require('../geometry/functions/calculatePathLength');
-const locationAtPositionOnPath = require('../geometry/functions/locationAtPositionOnPath');
 
 class PathElement extends Shape {
   constructor(firstVertex, attributes = {}) {
@@ -16,15 +14,14 @@ class PathElement extends Shape {
     }
   }
 
-  getTotalLineLength () {
-    if (!this.lineLength) {
-      this.lineLength = calculatePathLength(this.path);
+  closePath () {
+    if (this.path) {
+      this.path.closePath();
     }
-    return this.lineLength;
   }
 
-  locationAtStrokePosition (pct) {
-    return locationAtPositionOnPath(this.path, pct);
+  getPath () {
+    return this.path;
   }
 
   render (ctx) {

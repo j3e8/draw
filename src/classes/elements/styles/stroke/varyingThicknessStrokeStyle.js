@@ -2,11 +2,17 @@ import StrokeStyle from './strokeStyle';
 import Range from '../../../geometry/range';
 import SystemColors from '../../../color/systemColors';
 
-const DEFAULT_TRANSITION_POINTS_PER_UNIT = 15;
+import Random from '../../../math/random';
+import pointInsidePath from '../../../geometry/functions/pointInsidePath';
+import getSegmentsForPath from '../../../geometry/functions/getSegmentsForPath';
+import calculateSegmentLength from '../../../geometry/functions/calculateSegmentLength';
+import dataAlongSegment from '../../../geometry/functions/dataAlongSegment';
+
+const DEFAULT_TRANSITION_POINTS_PER_UNIT = 5;
 const DEFAULT_START_THICKNESS = 0.25;
 const DEFAULT_END_THICKNESS = 0.25;
-const DEFAULT_MIN_THICKNESS = 0.67;
-const DEFAULT_MAX_THICKNESS = 1.33;
+const DEFAULT_MIN_THICKNESS = 0.6;
+const DEFAULT_MAX_THICKNESS = 1.4;
 
 class VaryingThicknessStrokeStyle extends StrokeStyle {
   constructor (options) {
@@ -21,78 +27,86 @@ class VaryingThicknessStrokeStyle extends StrokeStyle {
     this.ratioRange = new Range(DEFAULT_MIN_THICKNESS, DEFAULT_MAX_THICKNESS);
   }
 
-  choosePoints (length) {
-    const numPoints = Math.round(this.transitionPointsPerUnit * length) + 2;
-    this.points = new Array(numPoints);
-    this.points[0] = {
-      position: 0,
-      thickness: this.startThickness,
-    };
-    this.points[numPoints - 1] = {
-      position: 1,
-      thickness: this.endThickness,
-    };
-
-    let lastPosition = 0;
+  choosePointsAlongPath (path) {
     const intervalOffsetRange = new Range(0.5, 1.5);
-    for (let i=1; i < numPoints - 1; i++) {
-      const avgIncrementPerPoint = (1 - lastPosition) / (numPoints - 1 - i + 1);
-      const p = lastPosition + intervalOffsetRange.randomValue() * avgIncrementPerPoint;
-      console.log(lastPosition, avgIncrementPerPoint, p);
-      this.points[i] = {
-        position: p,
-        thickness: this.ratioRange.randomValue(),
-      };
-      lastPosition = p;
-    }
-    console.log(this.points);
-  }
+    const segments = getSegmentsForPath(path, true);
 
-  dataAtPosition (position) {
-    if (position < 0 || position > 1) {
-      throw new Error("Invalid position given for VaryingThicknessStrokeStyle.dataAtPosition()");
-    }
-    const results = this.findBoundingPoints(position);
-    const boundingRange = new Range(results[1].position, results[0].position);
-    const pct = boundingRange.valueAsPercentOfRange(position);
-    const thickness = results[0].thickness * (1 - pct) + results[1].thickness * pct;
-    return {
-      thickness,
-    };
-  }
+    this.points = segments.reduce((totalArray, segment, segmentIndex) => {
+      const length = calculateSegmentLength(segment);
+      const numPoints = Math.round(this.transitionPointsPerUnit * length) + 1; // plus one to automically include the first vertex
+      const segmentPoints = new Array(numPoints);
 
-  findBoundingPoints (position) {
-    for (let i=0; i < this.points.length - 1; i++) {
-      if (this.points[i].position <= position && position <= this.points[i+1].position) {
-        return [ this.points[i], this.points[i+1] ];
+      let currentPosition = 0;
+      for (let i=0; i < numPoints; i++) {
+        const result = dataAlongSegment(currentPosition * length, segment);
+        segmentPoints[i] = {
+          ...result,
+          position: currentPosition,
+          thickness: this.ratioRange.randomValue(),
+        };
+        const avgIncrementPerPoint = (1 - currentPosition) / (numPoints - i);
+        currentPosition += intervalOffsetRange.randomValue() * avgIncrementPerPoint;
       }
-    }
-    return [ this.points[0], this.points[this.points.length - 1] ]; // this fallback should never be hit
+
+      return totalArray.concat(segmentPoints);
+    }, []);
+
+    this.points[0].thickness = this.startThickness;
+
+    // since we only render the start point of each segment, we need to manually add the end point of the last segment
+    this.points.push({
+      ...dataAlongSegment(1, segments[segments.length - 1]),
+      thickness: this.endThickness,
+    });
   }
 
   render (ctx, shape) {
-    const lineLength = shape.getTotalLineLength();
-    this.choosePoints(lineLength);
+    const path = shape.getPath();
+    this.choosePointsAlongPath(path);
 
-    ctx.fillStyle = this.strokeColor.toString();
-    for (let i=0; i < this.points.length; i++) {
-      const location = shape.locationAtStrokePosition(this.points[i].position);
-      ctx.beginPath();
-      ctx.arc(location.x, location.y, (this.points[i].thickness / 2) * this.strokeWidth, 0, Math.PI * 2);
-      ctx.fill();
+    if (this.points.length < 2) {
+      return;
     }
 
-    // const interval = this.strokeWidth * 0.05;
-    // ctx.fillStyle = this.strokeColor.toString();
-    // for (let i=0; i < lineLength; i+=interval) {
-    //   const pos = i / lineLength;
-    //   const location = shape.locationAtStrokePosition(pos);
-    //   const data = this.dataAtPosition(pos);
-    //   ctx.beginPath();
-    //   ctx.arc(location.x, location.y, (data.thickness / 2) * this.strokeWidth, 0, Math.PI * 2);
-    //   ctx.fill();
-    // }
+    const innerPathPoints = new Array(this.points.length);
+    const outerPathPoints = new Array(this.points.length);
 
+    for (let i=0; i < this.points.length; i++) {
+      let perpendicularAngle = this.points[i].angle + Math.PI * 0.5;
+      if (perpendicularAngle > Math.PI * 2) {
+        perpendicularAngle -= Math.PI * 2;
+      }
+      const distanceFromThalweg = this.points[i].thickness * this.strokeWidth;
+      const dx = Math.cos(perpendicularAngle) * distanceFromThalweg;
+      const dy = Math.sin(perpendicularAngle) * distanceFromThalweg;
+      const pointA = {
+        x: this.points[i].location.x + dx,
+        y: this.points[i].location.y + dy,
+      }
+      const pointB = {
+        x: this.points[i].location.x - dx,
+        y: this.points[i].location.y - dy,
+      }
+      if (pointInsidePath(pointA, path)) {
+        innerPathPoints[i] = pointA;
+        outerPathPoints[i] = pointB;
+      } else {
+        innerPathPoints[i] = pointB;
+        outerPathPoints[i] = pointA;
+      }
+    }
+
+    ctx.fillStyle = this.strokeColor.toString();
+    ctx.beginPath();
+      ctx.moveTo(outerPathPoints[0].x, outerPathPoints[0].y);
+      for (let i=1; i < outerPathPoints.length; i++) {
+        ctx.lineTo(outerPathPoints[i].x, outerPathPoints[i].y);
+      }
+      for (let i=innerPathPoints.length - 1; i >= 0; i--) {
+        ctx.lineTo(innerPathPoints[i].x, innerPathPoints[i].y);
+      }
+      ctx.closePath();
+    ctx.fill();
   }
 }
 

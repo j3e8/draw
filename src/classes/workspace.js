@@ -55,6 +55,8 @@ class Workspace {
     const p = new PathElement(f1, this.getCurrentElementAttributes());
     p.addVertex(new Vertex(new Point(2, 0)));
     p.addVertex(new Vertex(new Point(2, 2)));
+    p.addVertex(new Vertex(new Point(-2, 2)));
+    p.closePath();
     this.addElement(p);
   }
 

@@ -1,7 +1,11 @@
+const Segment = require('./segment');
+const calculateSegmentLength = require('./functions/calculateSegmentLength');
+
 class Path {
   constructor (firstVertex) {
     this.firstVertex = firstVertex || null;
     this.isClosed = false;
+    this.pathLength = null;
   }
 
   addVertex (v) {
@@ -11,14 +15,36 @@ class Path {
     }
     vert.nextVertex = v;
     v.prevVertex = vert;
+    this.pathLength = null;
   }
 
   getFirstVertex () {
     return this.firstVertex;
   }
 
+  calculatePathLength () {
+    // check if it's cached already
+    // if (this.pathLength !== null) {
+    //   return this.pathLength;
+    // }
+    let sum = 0;
+    let vert = this.firstVertex;
+    while (vert.nextVertex) {
+      sum += calculateSegmentLength(new Segment(vert, vert.nextVertex));
+      vert = vert.nextVertex;
+    }
+
+    if (this.isClosed) {
+      sum += calculateSegmentLength(new Segment(vert, this.firstVertex));
+    }
+
+    this.pathLength = sum;
+    return sum;
+  }
+
   closePath () {
     this.isClosed = true;
+    this.pathLength = null;
   }
 
   render (ctx) {

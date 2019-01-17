@@ -1,6 +1,8 @@
 const distanceBetweenPoints = require('./distanceBetweenPoints');
 
-module.exports = function calculateSegmentLength (v1, v2) {
+module.exports = function calculateSegmentLength (segment) {
+  const v1 = segment.startVertex;
+  const v2 = segment.endVertex;
   if (v1.controlAfter && v2.controlBefore) {
     // bezier
   } else if (v1.controlAfter) {
