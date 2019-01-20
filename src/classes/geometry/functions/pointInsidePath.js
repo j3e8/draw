@@ -2,7 +2,6 @@ const Segment = require('../segment');
 const Vertex = require('../vertex');
 const calculatePathBounds = require('./calculatePathBounds');
 const segmentsIntersect = require('./segmentsIntersect');
-const boundsOfSegment = require('./boundsOfSegment');
 
 module.exports = function pointInsidePath (pt, path) {
   const area = calculatePathBounds(path);
@@ -18,9 +17,7 @@ module.exports = function pointInsidePath (pt, path) {
     const controlSegment = new Segment(new Vertex(pt), new Vertex(outsidePoint));
     const pathSegment = new Segment(vert, vert.nextVertex || firstVertex);
     const intersection = segmentsIntersect(controlSegment, pathSegment);
-    const controlSegmentBounds = boundsOfSegment(controlSegment);
-    const pathSegmentBounds = boundsOfSegment(pathSegment);
-    if (controlSegmentBounds.containsPoint(intersection) && pathSegmentBounds.containsPoint(intersection)) {
+    if (intersection) {
       numberOfCrosses++;
     }
     vert = vert.nextVertex;

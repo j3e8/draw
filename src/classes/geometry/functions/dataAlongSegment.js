@@ -1,5 +1,6 @@
 const calculateSegmentLength = require('./calculateSegmentLength');
-const angleBetweenPoints = require('../../math/angleBetweenPoints');
+const angleBetweenPoints = require('./angleBetweenPoints');
+const bisectSegment = require('./bisectSegment');
 
 module.exports = function dataAlongSegment (distance, segment) {
   const v1 = segment.startVertex;
@@ -22,15 +23,16 @@ module.exports = function dataAlongSegment (distance, segment) {
   }
 
   const totalLength = calculateSegmentLength(segment);
+  const pct = distance / totalLength;
 
-  if (v1.controlAfter && v2.controlBefore) {
-    // bezier
-  } else if (v1.controlAfter) {
-    // quadratic
-  } else if (v2.controlBefore) {
-    // quadratic
+  if (v1.controlAfter || v2.controlBefore) {
+    const subsegments = bisectSegment(segment, pct);
+    const midVertex = subsegments[0].endVertex;
+    return {
+      angle: angleBetweenPoints(midVertex.controlBefore || midVertex.location, midVertex.controlAfter || midVertex.location),
+      location: midVertex.location,
+    }
   } else {
-    const pct = distance / totalLength;
     return {
       angle: angleBetweenPoints(v1.location, v2.location),
       location: {

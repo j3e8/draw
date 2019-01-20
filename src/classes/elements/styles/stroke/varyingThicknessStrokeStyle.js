@@ -8,11 +8,11 @@ import getSegmentsForPath from '../../../geometry/functions/getSegmentsForPath';
 import calculateSegmentLength from '../../../geometry/functions/calculateSegmentLength';
 import dataAlongSegment from '../../../geometry/functions/dataAlongSegment';
 
-const DEFAULT_TRANSITION_POINTS_PER_UNIT = 5;
+const DEFAULT_TRANSITION_POINTS_PER_UNIT = 11;
 const DEFAULT_START_THICKNESS = 0.25;
 const DEFAULT_END_THICKNESS = 0.25;
-const DEFAULT_MIN_THICKNESS = 0.6;
-const DEFAULT_MAX_THICKNESS = 1.4;
+const DEFAULT_MIN_THICKNESS = 0.4;
+const DEFAULT_MAX_THICKNESS = 1.6;
 
 class VaryingThicknessStrokeStyle extends StrokeStyle {
   constructor (options) {

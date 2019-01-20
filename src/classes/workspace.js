@@ -42,7 +42,7 @@ class Workspace {
     this.currentFillColor = SystemColors.DEFAULT_FILL.toString();
     this.currentFill = null;
     this.currentStrokeColor = SystemColors.DEFAULT_STROKE.toString();
-    this.currentStroke = VaryingThicknessStrokeStyle;
+    this.currentStroke = null;
     this.currentStrokeWidth = DEFAULT_STROKE_WIDTH[this.units];
 
     const workspaceInterface = {
@@ -51,13 +51,36 @@ class Workspace {
     this.activeLayer = new Layer(workspaceInterface);
     this.layers = [ this.activeLayer ];
 
-    const f1 = new Vertex(new Point(-2, 0));
-    const p = new PathElement(f1, this.getCurrentElementAttributes());
-    p.addVertex(new Vertex(new Point(2, 0)));
-    p.addVertex(new Vertex(new Point(2, 2)));
-    p.addVertex(new Vertex(new Point(-2, 2)));
-    p.closePath();
-    this.addElement(p);
+    // test rectangle
+    // const f1 = new Vertex(new Point(-2, 0));
+    // const p = new PathElement(f1, this.getCurrentElementAttributes());
+    // p.addVertex(new Vertex(new Point(2, 0)));
+    // p.addVertex(new Vertex(new Point(2, 2)));
+    // p.addVertex(new Vertex(new Point(-2, 2)));
+    // p.closePath();
+    // this.addElement(p);
+
+
+    const CIRCLE_CONTROL_POINT_CONSTANT = 0.552284749831;
+
+    // test circle
+    // const f1 = new Vertex(new Point(0, -1), new Point(-CIRCLE_CONTROL_POINT_CONSTANT, -1), new Point(CIRCLE_CONTROL_POINT_CONSTANT, -1));
+    // const p = new PathElement(f1, attr);
+    // p.addVertex(new Vertex(new Point(1, 0), new Point(1, -CIRCLE_CONTROL_POINT_CONSTANT), new Point(1, CIRCLE_CONTROL_POINT_CONSTANT)));
+    // p.addVertex(new Vertex(new Point(0, 1), new Point(CIRCLE_CONTROL_POINT_CONSTANT, 1), new Point(-CIRCLE_CONTROL_POINT_CONSTANT, 1)));
+    // p.addVertex(new Vertex(new Point(-1, 0), new Point(-1, CIRCLE_CONTROL_POINT_CONSTANT), new Point(-1, -CIRCLE_CONTROL_POINT_CONSTANT)));
+    // p.closePath();
+    // this.addElement(p);
+
+    // test circle
+    const attr = this.getCurrentElementAttributes();
+    const f2 = new Vertex(new Point(0, -1), new Point(-CIRCLE_CONTROL_POINT_CONSTANT, -1), new Point(CIRCLE_CONTROL_POINT_CONSTANT, -1));
+    const p2 = new PathElement(f2, Object.assign({}, attr, { stroke: VaryingThicknessStrokeStyle }));
+    p2.addVertex(new Vertex(new Point(1, 0), new Point(1, -CIRCLE_CONTROL_POINT_CONSTANT), new Point(1, CIRCLE_CONTROL_POINT_CONSTANT)));
+    p2.addVertex(new Vertex(new Point(0, 1), new Point(CIRCLE_CONTROL_POINT_CONSTANT, 1), new Point(-CIRCLE_CONTROL_POINT_CONSTANT, 1)));
+    p2.addVertex(new Vertex(new Point(-1, 0), new Point(-1, CIRCLE_CONTROL_POINT_CONSTANT), new Point(-1, -CIRCLE_CONTROL_POINT_CONSTANT)));
+    p2.closePath();
+    this.addElement(p2);
   }
 
   addElement (element) {

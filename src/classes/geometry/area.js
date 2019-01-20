@@ -31,6 +31,10 @@ class Area {
     return false;
   }
 
+  getArea () {
+    return this.width * this.height;
+  }
+
   getCenter () {
     return new Point((this.left + this.right) / 2, (this.top + this.bottom) / 2);
   }
