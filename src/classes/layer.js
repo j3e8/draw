@@ -18,9 +18,9 @@ class Layer {
     this.elements.push(element);
   }
 
-  render (ctx) {
+  render (ctx, scale) {
     this.elements.forEach((element) => {
-      element.render(ctx);
+      element.render(ctx, scale);
     });
   }
 }

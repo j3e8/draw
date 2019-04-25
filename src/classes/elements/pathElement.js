@@ -1,6 +1,8 @@
 const Shape = require('./shape');
 const Path = require('../geometry/path');
 
+const calculatePathBounds = require('../geometry/functions/calculatePathBounds');
+
 class PathElement extends Shape {
   constructor(firstVertex, attributes = {}) {
     super(attributes);
@@ -24,7 +26,11 @@ class PathElement extends Shape {
     return this.path;
   }
 
-  render (ctx) {
+  render (ctx, scale) {
+    console.log('scale', scale);
+    const b = calculatePathBounds(this.path);
+    console.log(`raster size ${b.width/scale} x ${b.height/scale}`);
+
     ctx.fillStyle = this.fillColor.toString();
     ctx.strokeStyle = this.strokeColor.toString();
     ctx.lineWidth = this.strokeWidth;
@@ -34,10 +40,10 @@ class PathElement extends Shape {
     if (this.fillColor) {
       ctx.fill();
     }
-    if (this.strokeColor && !this.stroke) {
+    if (this.strokeColor && !this.stroke.length) {
       ctx.stroke();
-    } else if (this.stroke) {
-      this.stroke.render(ctx, this);
+    } else if (this.stroke.length) {
+      this.stroke.forEach(stroke => stroke.render(ctx, this));
     }
   }
 }

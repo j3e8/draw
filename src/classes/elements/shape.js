@@ -7,7 +7,7 @@ class Shape extends Element {
     this.fillColor = attributes.fillColor !== undefined ? attributes.fillColor : SystemColors.DEFAULT_FILL.toString();
     this.fill = attributes.fill;
     this.strokeColor = attributes.strokeColor !== undefined ? attributes.strokeColor : SystemColors.DEFAULT_STROKE.toString();
-    this.stroke = attributes.stroke ? new attributes.stroke(attributes) : null;
+    this.stroke = attributes.stroke ? attributes.stroke.map(stroke => new stroke(attributes)) : [];
     this.strokeWidth = attributes.strokeWidth !== undefined ? attributes.strokeWidth : null;
   }
 }

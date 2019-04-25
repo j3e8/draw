@@ -75,7 +75,7 @@ class Workspace {
     // test circle
     const attr = this.getCurrentElementAttributes();
     const f2 = new Vertex(new Point(0, -1), new Point(-CIRCLE_CONTROL_POINT_CONSTANT, -1), new Point(CIRCLE_CONTROL_POINT_CONSTANT, -1));
-    const p2 = new PathElement(f2, Object.assign({}, attr, { stroke: VaryingThicknessStrokeStyle }));
+    const p2 = new PathElement(f2, Object.assign({}, attr, { stroke: [VaryingThicknessStrokeStyle] }));
     p2.addVertex(new Vertex(new Point(1, 0), new Point(1, -CIRCLE_CONTROL_POINT_CONSTANT), new Point(1, CIRCLE_CONTROL_POINT_CONSTANT)));
     p2.addVertex(new Vertex(new Point(0, 1), new Point(CIRCLE_CONTROL_POINT_CONSTANT, 1), new Point(-CIRCLE_CONTROL_POINT_CONSTANT, 1)));
     p2.addVertex(new Vertex(new Point(-1, 0), new Point(-1, CIRCLE_CONTROL_POINT_CONSTANT), new Point(-1, -CIRCLE_CONTROL_POINT_CONSTANT)));
@@ -172,12 +172,12 @@ class Workspace {
     this.renderInWorldCoordinates(ctx, () => {
       // render artboards
       this.artboards.forEach((artboard) => {
-        artboard.render(ctx);
+        artboard.render(ctx, this.scale);
       });
 
       // render layers
       this.layers.forEach((layer) => {
-        layer.render(ctx);
+        layer.render(ctx, this.scale);
       });
     });
   }
@@ -190,7 +190,7 @@ class Workspace {
       // render whatever the active tool is doing
       const activeTool = this.app.getActiveTool();
       if (activeTool) {
-        activeTool.render(ctx);
+        activeTool.render(ctx, this.scale);
       }
     });
   }
