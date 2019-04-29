@@ -9,6 +9,13 @@ module.exports = function angleBetweenPoints (a, b) {
   const slope = rise / run;
   let angle = Math.atan(slope);
   if (run < 0) {
+    angle += Math.PI;
+  }
+
+  if (angle >= Math.PI * 2) {
+    angle -= Math.PI * 2;
+  }
+  if (angle < 0) {
     angle += Math.PI * 2;
   }
   return angle;
