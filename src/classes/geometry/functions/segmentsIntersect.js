@@ -42,16 +42,16 @@ function straightLineIntersection (controlSegment, testSegment) {
     return controlSegment.startVertex.location.x === testSegment.startVertex.location.x ? controlSegment.startVertex.location : null; // if they're the same line, return the startVertex.location, otherwise null
   }
 
+  let intersection;
   if (controlSlope === Infinity) { // vertical first line only
-    return new Point(controlSegment.startVertex.location.x, testSlope * controlSegment.startVertex.location.x + testIntercept);
+    intersection = new Point(controlSegment.startVertex.location.x, testSlope * controlSegment.startVertex.location.x + testIntercept);
   } else if (testSlope === Infinity) { // vertical second line
-    return new Point(testSegment.startVertex.location.x, controlSlope * testSegment.startVertex.location.x + controlIntercept);
+    intersection = new Point(testSegment.startVertex.location.x, controlSlope * testSegment.startVertex.location.x + controlIntercept);
+  } else {
+    const x = (testIntercept - controlIntercept) / (controlSlope - testSlope);
+    const y = controlSlope * x + controlIntercept;
+    intersection = new Point (x, y);
   }
-
-  const x = (testIntercept - controlIntercept) / (controlSlope - testSlope);
-  const y = controlSlope * x + controlIntercept;
-
-  const intersection = new Point (x, y);
 
   const controlSegmentBounds = boundsOfSegment(controlSegment);
   const testSegmentBounds = boundsOfSegment(testSegment);
