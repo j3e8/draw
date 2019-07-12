@@ -39,18 +39,22 @@ function straightLineIntersection (controlSegment, testSegment) {
   const testIntercept = testSegment.endVertex.location.y - testSlope * testSegment.endVertex.location.x;
 
   if (controlSlope === testSlope) { // edge case would cause divide by zero
-    return controlSegment.startVertex.location.x === testSegment.startVertex.location.x ? controlSegment.startVertex.location : null; // if they're the same line, return the startVertex.location, otherwise null
+    return controlSegment.startVertex.location.x === testSegment.startVertex.location.x ? controlSegment.startVertex.location : false; // if they're the same line, return the startVertex.location, otherwise false
   }
 
   let intersection;
-  if (controlSlope === Infinity) { // vertical first line only
+  if (controlSlope === Infinity || controlSlope === -Infinity) { // vertical first line only
     intersection = new Point(controlSegment.startVertex.location.x, testSlope * controlSegment.startVertex.location.x + testIntercept);
-  } else if (testSlope === Infinity) { // vertical second line
+  } else if (testSlope === Infinity || testSlope === -Infinity) { // vertical second line
     intersection = new Point(testSegment.startVertex.location.x, controlSlope * testSegment.startVertex.location.x + controlIntercept);
+  } else if (controlSlope === 0) {
+    intersection = new Point((controlSegment.startVertex.location.y - testIntercept) / testSlope, controlSegment.startVertex.location.y);
+  } else if (testSlope === 0) {
+    intersection = new Point((testSegment.startVertex.location.y - controlIntercept) / controlSlope, testSegment.startVertex.location.y);
   } else {
     const x = (testIntercept - controlIntercept) / (controlSlope - testSlope);
     const y = controlSlope * x + controlIntercept;
-    intersection = new Point (x, y);
+    intersection = new Point(x, y);
   }
 
   const controlSegmentBounds = boundsOfSegment(controlSegment);
